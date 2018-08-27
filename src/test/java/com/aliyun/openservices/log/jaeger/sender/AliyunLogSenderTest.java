@@ -1,11 +1,14 @@
 package com.aliyun.openservices.log.jaeger.sender;
 
-import com.uber.jaeger.Tracer;
-import com.uber.jaeger.reporters.RemoteReporter;
-import com.uber.jaeger.samplers.ConstSampler;
+import io.jaegertracing.internal.JaegerSpan;
+import io.jaegertracing.internal.JaegerTracer;
+import io.jaegertracing.internal.reporters.RemoteReporter;
+import io.jaegertracing.internal.samplers.ConstSampler;
 import io.opentracing.Span;
 import java.util.HashMap;
 import java.util.Map;
+
+import io.opentracing.Tracer;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,7 +25,7 @@ public class AliyunLogSenderTest {
     RemoteReporter remoteReporter = new RemoteReporter.Builder()
         .withSender(aliyunLogSender)
         .build();
-    tracer = new Tracer.Builder("test-service-name")
+    tracer = new JaegerTracer.Builder("test-service-name")
         .withReporter(remoteReporter)
         .withSampler(new ConstSampler(true))
         .build();
@@ -40,7 +43,7 @@ public class AliyunLogSenderTest {
     span = span.setTag("str", "abc");
     span = span.setTag("bool", true);
 
-    aliyunLogSender.append((com.uber.jaeger.Span) span);
+    aliyunLogSender.append((JaegerSpan) span);
     aliyunLogSender.flush();
     aliyunLogSender.close();
   }
@@ -48,7 +51,7 @@ public class AliyunLogSenderTest {
   @Test
   public void testAppendSimpleSpan() throws Exception {
     Span span = tracer.buildSpan("operation-name").start();
-    aliyunLogSender.append((com.uber.jaeger.Span) span);
+    aliyunLogSender.append((JaegerSpan) span);
     aliyunLogSender.flush();
     aliyunLogSender.close();
   }

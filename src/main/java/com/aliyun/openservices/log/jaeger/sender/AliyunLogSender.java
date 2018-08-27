@@ -4,9 +4,9 @@ import com.aliyun.openservices.log.common.LogItem;
 import com.aliyun.openservices.log.producer.LogProducer;
 import com.aliyun.openservices.log.producer.ProducerConfig;
 import com.aliyun.openservices.log.producer.ProjectConfig;
-import com.uber.jaeger.Span;
-import com.uber.jaeger.exceptions.SenderException;
-import com.uber.jaeger.senders.Sender;
+import io.jaegertracing.internal.JaegerSpan;
+import io.jaegertracing.internal.exceptions.SenderException;
+import io.jaegertracing.spi.Sender;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,13 +30,13 @@ public class AliyunLogSender implements Sender {
   }
 
   @Override
-  public int append(Span span) throws SenderException {
-    LogItem logItem = LogItemSpanConverter.convertSpan(span);
-    List<LogItem> logItems = new ArrayList<LogItem>();
+  public int append(JaegerSpan jaegerSpan) throws SenderException {
+    LogItem logItem = LogItemSpanConverter.convertSpan(jaegerSpan);
+    List<LogItem> logItems = new ArrayList<>(1);
     logItems.add(logItem);
     producer.send(builder.projectConfig.projectName, builder.logStore, builder.topic, "", logItems,
-        new AliyunLogSenderCallback(builder.projectConfig.projectName, builder.logStore,
-            builder.topic, logItems));
+            new AliyunLogSenderCallback(builder.projectConfig.projectName, builder.logStore,
+                    builder.topic, logItems));
     return 0;
   }
 
