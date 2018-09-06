@@ -22,18 +22,18 @@ public abstract class LogItemSpanConverter {
     logItem.PushBack(Constants.PARENT_SPAN_ID, oneChildOfParent ? Long.toHexString(context.getParentId()) : "0");
     logItem.PushBack(Constants.OPERATION_NAME, span.getOperationName());
     logItem.PushBack(Constants.FLAGS, Long.toHexString(context.getFlags()));
-    logItem.PushBack(Constants.START_TIME, String.valueOf(TimeUnit.MICROSECONDS.toNanos(span.getStart())));
-    logItem.PushBack(Constants.DURATION, String.valueOf(TimeUnit.MICROSECONDS.toNanos(span.getDuration())));
+    logItem.PushBack(Constants.START_TIME, toStringValue(TimeUnit.MICROSECONDS.toNanos(span.getStart())));
+    logItem.PushBack(Constants.DURATION, toStringValue(TimeUnit.MICROSECONDS.toNanos(span.getDuration())));
 
     // process
     logItem.PushBack(Constants.PROCESS + "." + Constants.SERVICE_NAME, span.getServiceName());
     for (Map.Entry<String, ?> e : span.getTracer().tags().entrySet()) {
-      logItem.PushBack(Constants.PROCESS + ".tags."  + e.getKey(), String.valueOf(e.getValue()));
+      logItem.PushBack(Constants.PROCESS + ".tags."  + e.getKey(), toStringValue(e.getValue()));
     }
 
     // tags
     for (Map.Entry<String, ?> e : span.getTags().entrySet()) {
-      logItem.PushBack(Constants.TAGS + "."  + e.getKey(), String.valueOf(e.getValue()));
+      logItem.PushBack(Constants.TAGS + "."  + e.getKey(), toStringValue(e.getValue()));
     }
 
 //    logItem.PushBack(Constants.REFERENCES, buildReferences(span.getReferences()).toJSONString());
@@ -42,6 +42,10 @@ public abstract class LogItemSpanConverter {
 //    logItem.PushBack(Constants.PROCESS, buildProcess(span).toJSONString());
 
     return logItem;
+  }
+
+  static String toStringValue(Object value) {
+    return value == null ? null : value.toString();
   }
 
 //  static JSONObject buildTags(Map<String, ?> tags) {

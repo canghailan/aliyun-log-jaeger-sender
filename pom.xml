@@ -10,7 +10,7 @@
 
   <groupId>cc.whohow</groupId>
   <artifactId>aliyun-log-jaeger-sender</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
 
   <name>Aliyun LOG Jaeger Sender</name>
   <url>http://www.aliyun.com</url>
